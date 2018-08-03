@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Dufferzafar">
+    <title>Information</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1 style="text-align:center;"> Sources </h1>
+    <div class="table-responsive-md">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr class="table-info table-hover ">
+                    <th scope="col ">Index</th>
+                    <th scope="col ">Repostitory</th>
+                    <th scope="col ">Description</th>
+                    <th scope="col ">Created at</th>
+                    <th scope="col ">Last commit at</th>
+                    <th scope="col ">Language</th>
+                    <th scope="col ">Stars</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in source %}
+                <tr scope="row ">
+                    <td>{{loop.index}}</td>
+                    <td><a href="{{row.6}} ">{{row.0}}</a></td>
+                    <td>{{row.1}}</td>
+                    <td>{{row.2}}</td>
+                    <td>{{row.3}}</td>
+                    <td>{{row.4}}</td>
+                    <td>{{row.5}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h1 style="text-align:center;"> Forks </h1>
+    <div class="table-responsive-md">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr class="table-info table-hover ">
+                    <th scope="col ">Index</th>
+                    <th scope="col ">Repostitory</th>
+                    <th scope="col ">Description</th>
+                    <th scope="col ">Created at</th>
+                    <th scope="col ">Last commit at</th>
+                    <th scope="col ">Language</th>
+                    <th scope="col ">Stars</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in fork %}
+                <tr scope="row ">
+                    <td>{{loop.index}}</td>
+                    <td><a href="{{row.6}} ">{{row.0}}</a></td>
+                    <td>{{row.1}}</td>
+                    <td>{{row.2}}</td>
+                    <td>{{row.3}}</td>
+                    <td>{{row.4}}</td>
+                    <td>{{row.5}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h1 style="text-align:center;"> Issues </h1>
+    <div class="table-responsive-md">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr class="table-info table-hover ">
+                    <th scope="col ">Index</th>
+                    <th scope="col ">Title</th>
+                    <th scope="col ">N0.Comments</th>
+                    <th scope="col ">Created at</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in issue %}
+                <tr scope="row ">
+                    <td>{{loop.index}}</td>
+                    <td><a href="{{row.3}} ">{{row.0}}</a></td>
+                    <td>{{row.1}}</td>
+                    <td>{{row.2}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h1 style="text-align:center;"> Pulls </h1>
+    <div class="table-responsive-md">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr class="table-info table-hover ">
+                    <th scope="col ">Index</th>
+                    <th scope="col ">Title</th>
+                    <th scope="col ">Created at</th>
+                    <th scope="col ">Association</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in pull %}
+                <tr scope="row ">
+                    <td>{{loop.index}}</td>
+                    <td><a href="{{row.3}} ">{{row.0}}</a></td>
+                    <td>{{row.1}}</td>
+                    <td>{{row.2}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://koalyptus.github.io/TableFilter/tablefilter/tablefilter.js"></script>
+    <script>
+    var tfConfig = {
+        base_path: "https://koalyptus.github.io/TableFilter/tablefilter/",
+        extensions: [{
+            name: 'sort'
+        }],
+    };
+
+    var tf = new TableFilter(document.querySelector('.table'), tfConfig);
+    tf.init();
+    </script>
+</body>
+
+</html>
