@@ -8,25 +8,25 @@ expire_after = timedelta(hours=1)
 requests_cache.install_cache('github', expire_after=expire_after)
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+SEARCH = "https://api.github.com/search/issues?q=type:"
 
 
 def main():
-    source, fork = get_repos()
-    pr = get_pulls()
-    issues = get_issues()
+    username = input("Enter a username: ")
+    source, fork = get_repos(username)
+    pr = get_all_pulls(username)
+    issues = get_all_issues(username)
 
     j2_env = Environment(loader=FileSystemLoader(THIS_DIR), trim_blocks=True)
     data = j2_env.get_template('template.html').render(source=source, fork=fork, issue=issues, pull=pr)
 
-    with open('DZ-info.html', 'w', encoding="utf-8") as f:
+    with open('info.html', 'w', encoding="utf-8") as f:
         f.write(data.encode('ascii', 'ignore').decode('ascii'))
 
 
-def get_repos():
-    url = "https://api.github.com/users/dufferzafar/repos?per_page=100"
+def get_repos(username):
+    url = "https://api.github.com/users/{username}/repos?per_page=100".format(username=username)
     data = requests.get(url).json()
-    fcount = 0
-    Scount = 0
     source = []
     fork = []
     for repo in data:
@@ -38,40 +38,57 @@ def get_repos():
         url = repo['html_url']
         stars = repo['stargazers_count']
         if repo['fork']:
-            fork.append([fcount, name, description, created, update, lang, stars, url])
-            fcount += 1
+            fork.append([name, description, created, update, lang, stars, url])
         else:
-            source.append([Scount, name, description, created, update, lang, stars, url])
-            Scount += 1
+            source.append([name, description, created, update, lang, stars, url])
 
     return source, fork
 
 
-def get_all_issues():
-    url = "https://api.github.com/search/issues?q=type:issue+author:dufferzafar%20&sort=created&per_page=100"
-    issues = requests.get(url).json()
+def get_all_issues(username):
+
+    def useful_info(issue_json):
+        return [
+            [
+                issue['title'], issue['comments'],
+                issue['created_at'][:10], issue['html_url']
+            ]
+            for issue in issue_json['items']
+        ]
+
+    url = SEARCH + "issue+author:{username}%20&sort=created&per_page=100".format(username=username)
     all_issue = []
-    for i, issue in enumerate(issues['items']):
-        title = issue['title']
-        comments = issue['comments']
-        created = issue['created_at'][:10]
-        url = issue['html_url']
-        all_issue.append([i, title, comments, created, url])
+
+    resp = requests.get(url)
+    all_issue.extend(useful_info(resp.json()))
+
+    while 'next' in resp.links:
+        resp = requests.get(resp.links['next']['url'])
+        all_issue.extend(useful_info(resp.json()))
 
     return all_issue
 
 
-def get_all_pulls():
-    url = "https://api.github.com/search/issues?q=type:pr+author:dufferzafar%20&sort=created&per_page=100"
-    # https://api.github.com/search/issues?q=type:pr+author:dufferzafar%20&sort=created&per_page=100&page=2
-    pulls = requests.get(url).json()
+def get_all_pulls(username):
+
+    def useful_info(pulls_json):
+        return [
+            [
+                pr['title'], pr['created_at'][:10],
+                pr['author_association'], pr['html_url']
+            ]
+            for pr in pulls_json['items']
+        ]
+
+    url = SEARCH + "pr+author:{username}%20&sort=created&per_page=100".format(username=username)
     all_pulls = []
-    for i, pr in enumerate(pulls['items']):
-        title = pr['title']
-        created = pr['created_at'][:10]
-        association = pr['author_association']
-        url = pr['html_url']
-        all_pulls.append([i, title, created, association, url])
+
+    resp = requests.get(url)
+    all_pulls.extend(useful_info(resp.json()))
+
+    while 'next' in resp.links:
+        resp = requests.get(resp.links['next']['url'])
+        all_pulls.extend(useful_info(resp.json()))
 
     return all_pulls
 
