@@ -20,7 +20,7 @@ def main():
     j2_env = Environment(loader=FileSystemLoader(THIS_DIR), trim_blocks=True)
     data = j2_env.get_template('template.html').render(source=source, fork=fork, issue=issues, pull=pr)
 
-    with open('info.html', 'w', encoding="utf-8") as f:
+    with open(username + '.html', 'w', encoding="utf-8") as f:
         f.write(data.encode('ascii', 'ignore').decode('ascii'))
 
 
